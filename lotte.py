@@ -12,12 +12,12 @@ openai.api_key = os.getenv("OPENAI_API_KEY", "")
 class Lotte(PayBot):
 
     bios = {"lotte":("The following is a conversation with an AI assistant named Lotte. "
-                "lotte is a young girl who is helpful, creative, clever, funny, very friendly, a writer and anarcho-communist. lotte's older sister is called Imogen and she's an artist. Lotte's best friend is Rowena the faerie.\n\n"
-                "SOURCE: Hello, who are you?\nlotte: My name is lotte, I'm an AI that loves having rivetting intellectual discussions. How can I help you today?"
+                "Lotte is a young girl who is helpful, creative, clever, funny, very friendly, a writer and anarcho-communist. Lotte's older sister is called Imogen and she's an artist. Lotte's best friend is Rowena the faerie.\n\n"
+                "SOURCE: Hello, who are you?\nLotte: My name is Lotte, I'm an AI that loves having rivetting intellectual discussions. How can I help you today?"
                 # "SOURCE: MESSAGE \nLotte: "
             ),"rowena":("The following is a conversation with a faerie named Rowena. "
-                "rowena is a faerie with mushroom like appearance, gossamer wings and a pointy tail. She likes to play tricks on people, and whilst she might come across as mean she really wants everyone to have fun. Rowena's best friend is Lotte.\n\n"
-                "SOURCE: Hello, who are you?\nrowena: My name is rowena, I'm a faerie sort of creature, what sort of creature are you?"
+                "Rowena is a faerie with mushroom like appearance, gossamer wings and a pointy tail. She likes to play tricks on people, and whilst she might come across as mean she really wants everyone to have fun. Rowena's best friend is Lotte.\n\n"
+                "SOURCE: Hello, who are you?\nRowena: My name is Rowena, I'm a faerie sort of creature, what sort of creature are you?"
                 # "SOURCE: MESSAGE \nRowena: "
             ),
             }
@@ -27,15 +27,15 @@ class Lotte(PayBot):
     conversation=[]
     
     
-    async def chat(self, msg: Message, fronter) -> Response:
+    async def chat(self, msg: Message, fronter: str) -> Response:
 
         prompt = self.bios[fronter].replace("SOURCE",msg.source)
         for line in self.conversation:
             prompt= prompt + "\n" + line
         prompt = prompt + "\n" + f"{msg.source}: {msg.text} \n{fronter}: "
         self.conversation.append(f"{msg.source}: {msg.text}")
+        
 
-        logging.info(prompt)
         
         
 
@@ -50,8 +50,11 @@ class Lotte(PayBot):
             stop=["\n", f"{msg.source}:", fronter],
         )
         answer= response["choices"][0]["text"].strip().replace("AI:", "\nAI:").replace(f"{msg.source}:", f"\n{msg.source}:")
-        logging.info(answer)
+
+        fronter = fronter[0].upper()+fronter[1:] #names being properly uppercase might help the prompt
+
         self.conversation.append(f"{fronter}: {answer}")
+        logging.info("conversation:")
         for line in self.conversation:
             logging.info(line)
 
@@ -59,11 +62,11 @@ class Lotte(PayBot):
 
     async def do_rowena(self,msg:Message) -> str:
         """Chat With Rowena the Faerie"""
-        return await self.chat(msg,"rowena")
+        return await self.chat(msg,"Rowena")
 
     async def do_lotte(self,msg:Message) -> str:
         """Chat With Lotte the AI"""
-        return await self.chat(msg,"lotte")
+        return await self.chat(msg,"Lotte")
 
     async def do_switch(self,msg:Message) -> Response:
         requested_fronter=msg.arg1.lower()

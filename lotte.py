@@ -50,11 +50,11 @@ class Lotte(PayBot):
         result = openai.Completion.create(  # type: ignore
             engine="curie",
             prompt = prompt,
-            temperature=0.9,
-            max_tokens=240,
+            temperature=0.75,
+            max_tokens=250,
             top_p=1,
             frequency_penalty=0.01,
-            presence_penalty=0.6,
+            presence_penalty=0.7,
             stop=["\n", f"{msg.source}:", fronter],
         )
         answer= result["choices"][0]["text"].strip().replace("AI:", "\nAI:").replace(f"{msg.source}:", f"\n{msg.source}:")
@@ -99,6 +99,12 @@ class Lotte(PayBot):
     async def do_clear(self,msg:Message) -> Response:
         self.conversation=[]
         return "conversation history has been cleared"
+
+    # async def summarize_history(self, conversation) -> list(str):
+    #     openai.
+        
+        
+    #     return conversation
 
     
 

@@ -23,6 +23,8 @@ python_version = "3.9"
 allow_prereleases = true
 
 [dev-packages]
+mypy = "*"
+pylint = "*"
 
 [packages.aiohttp]
 extras = [ "speedups",]

@@ -1,4 +1,4 @@
-from datetime import datetime
+import time
 import os
 import logging
 from urllib import response
@@ -45,7 +45,7 @@ class Lotte(PayBot):
         for line in self.conversation:
             prompt= prompt + "\n" + line
         prompt = prompt + "\n" + f"{msg.source}: {msg.text} \n{fronter}: "
-        self.conversation.append(f"{msg.source}: {msg.text}")
+        self.conversation[time.time()]=f"{msg.source}: {msg.text}"
         
         result = openai.Completion.create(  # type: ignore
             engine="curie",
@@ -61,19 +61,13 @@ class Lotte(PayBot):
 
         fronter = fronter[0].upper()+fronter[1:] #names being properly uppercase might help the prompt
 
-        self.conversation.append[]
+        self.conversation[time.time()] = answer
         logging.info("conversation:")
         for line in self.conversation:
             logging.info(line)
 
         return answer # + f"\n and here's the extra:\n {str(len(self.conversation))} \n {self.conversation[len(self.conversation)-1]}"
 
-    async def generate(self, prompt:str) -> Response:
-        """makes a request to the GPT model"""
-
-        
-
-        return response
         
 
 
@@ -97,7 +91,7 @@ class Lotte(PayBot):
             return "there's no one by that name in our system"
 
     async def do_clear(self,msg:Message) -> Response:
-        self.conversation=[]
+        self.conversation={}
         return "conversation history has been cleared"
 
     # async def summarize_history(self, conversation) -> list(str):
